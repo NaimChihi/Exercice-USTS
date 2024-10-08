@@ -6,4 +6,9 @@ controllers:
 
 auth:
     path: /api/auth
-    methods: ['POST']
+    methods: ["POST"]
+
+protected_route:
+    path: /api/protected-route
+    controller: App\Controller\ProtectedController::protectedRoute
+    methods: GET

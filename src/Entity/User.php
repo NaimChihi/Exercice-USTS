@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'app_user')] 
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -41,9 +42,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'users')]
     private Collection $companies;
 
+    /**
+     * @var Collection<int, UserCompany>
+     */
+    #[ORM\OneToMany(targetEntity: UserCompany::class, mappedBy: 'userAccount', orphanRemoval: true)]
+    private Collection $userCompanies;
+
     public function __construct()
     {
         $this->companies = new ArrayCollection();
+        $this->userCompanies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -143,6 +151,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->companies->removeElement($company)) {
             $company->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserCompany>
+     */
+    public function getUserCompanies(): Collection
+    {
+        return $this->userCompanies;
+    }
+
+    public function addUserCompany(UserCompany $userCompany): static
+    {
+        if (!$this->userCompanies->contains($userCompany)) {
+            $this->userCompanies->add($userCompany);
+            $userCompany->setUserAccount($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserCompany(UserCompany $userCompany): static
+    {
+        if ($this->userCompanies->removeElement($userCompany)) {
+            // set the owning side to null (unless already changed)
+            if ($userCompany->getUserAccount() === $this) {
+                $userCompany->setUserAccount(null);
+            }
         }
 
         return $this;

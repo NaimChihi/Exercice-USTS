@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
+#[ApiResource]
 class Company
 {
     #[ORM\Id]
@@ -37,10 +38,17 @@ class Company
     #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'company')]
     private Collection $projects;
 
+    /**
+     * @var Collection<int, UserCompany>
+     */
+    #[ORM\OneToMany(targetEntity: UserCompany::class, mappedBy: 'company', orphanRemoval: true)]
+    private Collection $userCompanies;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->projects = new ArrayCollection();
+        $this->userCompanies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -132,6 +140,36 @@ class Company
             // set the owning side to null (unless already changed)
             if ($project->getCompany() === $this) {
                 $project->setCompany(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserCompany>
+     */
+    public function getUserCompanies(): Collection
+    {
+        return $this->userCompanies;
+    }
+
+    public function addUserCompany(UserCompany $userCompany): static
+    {
+        if (!$this->userCompanies->contains($userCompany)) {
+            $this->userCompanies->add($userCompany);
+            $userCompany->setCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserCompany(UserCompany $userCompany): static
+    {
+        if ($this->userCompanies->removeElement($userCompany)) {
+            // set the owning side to null (unless already changed)
+            if ($userCompany->getCompany() === $this) {
+                $userCompany->setCompany(null);
             }
         }
 

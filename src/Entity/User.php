@@ -16,174 +16,156 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ApiResource]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // Identifiant unique de l'utilisateur
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    // Adresse e-mail de l'utilisateur (doit être unique)
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
+    // Les rôles de l'utilisateur sous forme de tableau de chaînes
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
+    // Mot de passe haché de l'utilisateur
     #[ORM\Column]
     private ?string $password = null;
 
-    /**
-     * @var Collection<int, Company>
-     */
+    // Collection des entreprises associées à l'utilisateur
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'users')]
     private Collection $companies;
 
-    /**
-     * @var Collection<int, UserCompany>
-     */
+    // Collection des UserCompany associant l'utilisateur aux entreprises
     #[ORM\OneToMany(targetEntity: UserCompany::class, mappedBy: 'userAccount', orphanRemoval: true)]
     private Collection $userCompanies;
 
+    // Constructeur de la classe User
     public function __construct()
     {
         $this->companies = new ArrayCollection();
         $this->userCompanies = new ArrayCollection();
     }
 
+    // Obtient l'identifiant de l'utilisateur
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    // Obtient l'adresse e-mail de l'utilisateur
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    // Définit l'adresse e-mail de l'utilisateur
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
+    // Obtient l'identifiant utilisateur (utilisé par Symfony)
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @return list<string>
-     * @see UserInterface
-     *
-     */
+    // Obtient les rôles de l'utilisateur (avec ROLE_USER par défaut)
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
+    // Définit les rôles de l'utilisateur
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
+    // Obtient le mot de passe de l'utilisateur
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
+    // Définit le mot de passe de l'utilisateur
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
+    // Méthode requise par UserInterface (peut être utilisée pour effacer des données sensibles)
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
-    /**
-     * @return Collection<int, Company>
-     */
+    // Obtient la collection des entreprises associées à l'utilisateur
     public function getCompanies(): Collection
     {
         return $this->companies;
     }
 
+    // Ajoute une entreprise à la collection des entreprises de l'utilisateur
     public function addCompany(Company $company): static
     {
         if (!$this->companies->contains($company)) {
             $this->companies->add($company);
             $company->addUser($this);
         }
-
         return $this;
     }
 
+    // Retire une entreprise de la collection des entreprises de l'utilisateur
     public function removeCompany(Company $company): static
     {
         if ($this->companies->removeElement($company)) {
             $company->removeUser($this);
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserCompany>
-     */
+    // Obtient la collection des UserCompany associant l'utilisateur aux entreprises
     public function getUserCompanies(): Collection
     {
         return $this->userCompanies;
     }
 
+    // Ajoute une UserCompany à la collection des UserCompany de l'utilisateur
     public function addUserCompany(UserCompany $userCompany): static
     {
         if (!$this->userCompanies->contains($userCompany)) {
             $this->userCompanies->add($userCompany);
             $userCompany->setUserAccount($this);
         }
-
         return $this;
     }
 
+    // Retire une UserCompany de la collection des UserCompany de l'utilisateur
     public function removeUserCompany(UserCompany $userCompany): static
     {
         if ($this->userCompanies->removeElement($userCompany)) {
-            // set the owning side to null (unless already changed)
             if ($userCompany->getUserAccount() === $this) {
                 $userCompany->setUserAccount(null);
             }
         }
-
         return $this;
     }
-}
 
+    // Récupère la liste des sociétés associées à l'utilisateur via UserCompany
+    public function getCompaniesList(): Collection
+    {
+        $companies = new ArrayCollection();
+        foreach ($this->userCompanies as $userCompany) {
+            $companies->add($userCompany->getCompany());
+        }
+        return $companies;
+    }
+}

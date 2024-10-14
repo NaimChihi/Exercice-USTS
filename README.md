@@ -111,3 +111,34 @@ Les utilisateurs étant déjà fournis, il n'est pas nécessaire d'en sécuriser
 ---
 
 Cet exercice vous permet de démontrer vos compétences en gestion de droits d'accès dans une application multi-sociétés, ainsi que votre capacité à organiser et sécuriser une API Symfony avec des cas d'usage complexes.
+
+---------------------------------------------------------------------------------------------------------------- ## Résumé du développement pour l'exercice USTS ##
+
+## Étapes du Développement :
+
+-   **Configuration de l'Environnement** :
+
+J'ai commencé par configurer l'environnement de développement en utilisant Docker, ce qui m'a permis de gérer facilement les dépendances et de garantir la cohérence de l'application sur différentes machines.
+J'ai créé un repository Github pour pouvoir sauvegarder mon travail régulièrement.
+
+-   **Mise en Place de la Base de Données** :
+
+J'ai conçu le schéma de la base de données pour gérer les sociétés et les projets, en veillant à respecter les relations entre les entités. J'ai également utilisé Doctrine pour interagir avec la base de données PostgreSQL.
+J'ai utilisé pgAdmin pour l'interface de ma base de données.
+
+-   **Développement des Fonctions API** :
+
+J'ai créé des endpoints RESTful pour permettre aux utilisateurs de créer, lire, mettre à jour et supprimer des sociétés et des projets. Chaque endpoint a été sécurisé en fonction des rôles des utilisateurs (admin, manager, consultant), garantissant ainsi que seules les actions autorisées soient effectuées.
+
+-   **Gestion des Droits d'Accès** :
+
+J'ai mis en place un système de contrôle d'accès qui restreint les actions des utilisateurs en fonction de leur rôle dans chaque société. Cela a inclus des vérifications dans les contrôleurs pour s'assurer que les utilisateurs ne peuvent accéder qu'aux ressources pertinentes.
+
+-   **Tests et Validation** :
+
+J'ai écrit des tests unitaires et fonctionnels pour valider le bon fonctionnement de l'API et des droits d'accès. Cela a permis d'identifier et de corriger certains problèmes avant le déploiement.
+Lors de la réalisation des tests, j'ai rencontré des difficultés, notamment avec le ProjectControllerTest, où j'ai dû résoudre des problèmes liés à la gestion des exceptions.
+
+-   **Documentation** :
+
+J'ai documenté l'API et les fonctionnalités clés pour faciliter l'utilisation par d'autres développeurs et pour les tests futurs.

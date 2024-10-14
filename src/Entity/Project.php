@@ -17,17 +17,22 @@ class Project
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private ?string $title = null; // Titre du projet
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
+    private ?string $description = null; // Description du projet
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdAt = null;
+    private ?\DateTimeInterface $createdAt = null; // Date de création du projet
 
     #[ORM\ManyToOne(inversedBy: 'projects')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Company $company = null;
+    private ?Company $company = null; // Lien vers l'entreprise associée
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime(); // Initialisation de created_at à la création d'un projet
+    }
 
     public function getId(): ?int
     {
@@ -42,7 +47,6 @@ class Project
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -54,7 +58,6 @@ class Project
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -66,7 +69,6 @@ class Project
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -78,7 +80,6 @@ class Project
     public function setCompany(?Company $company): static
     {
         $this->company = $company;
-
         return $this;
     }
 }

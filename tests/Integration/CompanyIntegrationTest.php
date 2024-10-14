@@ -2,31 +2,27 @@
 
 namespace App\Tests\Integration;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Company;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class CompanyIntegrationTest extends WebTestCase
+class CompanyIntegrationTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        self::bootKernel(); // Démarre le noyau de Symfony
-        $this->entityManager = self::$container->get(EntityManagerInterface::class); // Récupère l'entity manager
-    }
-
     public function testPersistCompany(): void
     {
-        // Crée une nouvelle société
+        self::bootKernel();
+        $container = self::$kernel->getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+
         $company = new Company();
-        $company->setName('Integration Test Company');
+        $company->setName('Integrated Company');
 
-        // Persiste la société
-        $this->entityManager->persist($company);
-        $this->entityManager->flush();
+        $entityManager->persist($company);
+        $entityManager->flush();
 
-        // Vérifiez que la société a bien été persistée dans la base de données
-        $this->assertNotNull($company->getId());
+        $repository = $entityManager->getRepository(Company::class);
+        $retrievedCompany = $repository->findOneBy(['name' => 'Integrated Company']);
+
+        $this->assertNotNull($retrievedCompany);
+        $this->assertSame('Integrated Company', $retrievedCompany->getName());
     }
 }

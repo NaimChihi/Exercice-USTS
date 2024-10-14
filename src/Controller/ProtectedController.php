@@ -1,13 +1,11 @@
 <?php
 
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-
 
 class ProtectedController extends AbstractController
 {
@@ -20,6 +18,3 @@ class ProtectedController extends AbstractController
         return new JsonResponse(['message' => 'This is a protected route.']);
     }
 }
-
-
-

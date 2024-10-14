@@ -2,41 +2,38 @@
 
 namespace App\Tests\Integration;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Project;
-use App\Entity\Company;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use App\Entity\Project; // Assurez-vous que cette importation est correcte
+use App\Entity\Company; // Ajoutez cette ligne pour importer la classe Company
 
-class ProjectIntegrationTest extends WebTestCase
+class ProjectIntegrationTest extends KernelTestCase
 {
-    private EntityManagerInterface $entityManager;
-
-    protected function setUp(): void
-    {
-        self::bootKernel(); // Démarre le noyau de Symfony
-        $this->entityManager = self::$container->get(EntityManagerInterface::class); // Récupère l'entity manager
-    }
-
     public function testPersistProject(): void
     {
-        // Crée une société pour le test
-        $company = new Company();
-        $company->setName('Integration Test Company');
+        self::bootKernel();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
 
-        $this->entityManager->persist($company);
-        $this->entityManager->flush();
+        // Assurez-vous que l'entreprise est déjà en base de données
+        $company = $entityManager->getRepository(Company::class)->find(1);
+        
+        // Si l'entreprise n'existe pas, vous pourriez vouloir créer une nouvelle entreprise ici
+        if (!$company) {
+            $company = new Company();
+            $company->setName('Default Test Company');
+            $company->setSiret('12345678901234'); // Assurez-vous d'utiliser une valeur valide pour siret
+            $entityManager->persist($company);
+            $entityManager->flush();
+        }
 
-        // Crée un nouveau projet
         $project = new Project();
         $project->setTitle('Integration Test Project');
-        $project->setDescription('Project description');
-        $project->setCompany($company); // Associe le projet à la société
+        $project->setDescription('This is a project created during integration testing.');
+        $project->setCreatedAt(new \DateTime());
+        $project->setCompany($company);
 
-        // Persiste le projet
-        $this->entityManager->persist($project);
-        $this->entityManager->flush();
+        $entityManager->persist($project);
+        $entityManager->flush();
 
-        // Vérifiez que le projet a bien été persisté dans la base de données
         $this->assertNotNull($project->getId());
     }
 }

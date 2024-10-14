@@ -21,10 +21,10 @@ class Company
     private ?string $name = null;
 
     #[ORM\Column(length: 14)]
-    private ?string $siret = null;
+    private ?string $siret = null; // SIRET de l'entreprise
 
     #[ORM\Column(length: 255)]
-    private ?string $address = null;
+    private ?string $address = null; // Adresse de l'entreprise
 
     /**
      * @var Collection<int, User>
@@ -64,7 +64,6 @@ class Company
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -76,7 +75,6 @@ class Company
     public function setSiret(string $siret): static
     {
         $this->siret = $siret;
-
         return $this;
     }
 
@@ -88,7 +86,6 @@ class Company
     public function setAddress(string $address): static
     {
         $this->address = $address;
-
         return $this;
     }
 
@@ -105,14 +102,12 @@ class Company
         if (!$this->users->contains($user)) {
             $this->users->add($user);
         }
-
         return $this;
     }
 
     public function removeUser(User $user): static
     {
         $this->users->removeElement($user);
-
         return $this;
     }
 
@@ -130,19 +125,17 @@ class Company
             $this->projects->add($project);
             $project->setCompany($this);
         }
-
         return $this;
     }
 
     public function removeProject(Project $project): static
     {
         if ($this->projects->removeElement($project)) {
-            // set the owning side to null (unless already changed)
+            // Set the owning side to null (unless already changed)
             if ($project->getCompany() === $this) {
                 $project->setCompany(null);
             }
         }
-
         return $this;
     }
 
@@ -160,19 +153,17 @@ class Company
             $this->userCompanies->add($userCompany);
             $userCompany->setCompany($this);
         }
-
         return $this;
     }
 
     public function removeUserCompany(UserCompany $userCompany): static
     {
         if ($this->userCompanies->removeElement($userCompany)) {
-            // set the owning side to null (unless already changed)
+            // Set the owning side to null (unless already changed)
             if ($userCompany->getCompany() === $this) {
                 $userCompany->setCompany(null);
             }
         }
-
         return $this;
     }
 }

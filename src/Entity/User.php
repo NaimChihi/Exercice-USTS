@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+// Déclare l'entité User et configure son utilisation avec API Platform
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'app_user')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -19,23 +20,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id = null; // Identifiant unique de l'utilisateur
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    private ?string $email = null; // Adresse email de l'utilisateur
 
     #[ORM\Column]
-    private array $roles = [];
+    private array $roles = []; // Rôles associés à l'utilisateur
 
     #[ORM\Column]
-    private ?string $password = null;
+    private ?string $password = null; // Mot de passe de l'utilisateur
 
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'users')]
-    private Collection $companies;
+    private Collection $companies; // Liste des entreprises associées à l'utilisateur
 
     #[ORM\OneToMany(targetEntity: UserCompany::class, mappedBy: 'userAccount', orphanRemoval: true)]
-    private Collection $userCompanies;
+    private Collection $userCompanies; // Liste des relations UserCompany associées à l'utilisateur
 
+    // Constructeur pour initialiser les collections
     public function __construct()
     {
         $this->companies = new ArrayCollection();

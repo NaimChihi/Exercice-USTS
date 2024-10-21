@@ -8,8 +8,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+// Déclare l'entité Company et configure son utilisation avec API Platform
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    security: "is_granted('ROLE_USER')", // Sécurise l'accès aux ressources à ceux qui ont le rôle ROLE_USER
+    operations: [
+        new \ApiPlatform\Metadata\GetCollection( // Opération pour récupérer la collection d'entreprises
+            security: "is_granted('ROLE_USER')" // Sécurise l'opération
+        ),
+        new \ApiPlatform\Metadata\Post( // Opération pour créer une nouvelle entreprise
+            security: "is_granted('ROLE_USER')" // Sécurise l'opération
+        ),
+    ]
+)]
 class Company
 {
     #[ORM\Id]
@@ -18,7 +29,7 @@ class Company
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private ?string $name = null; // Nom de l'entreprise
 
     #[ORM\Column(length: 14)]
     private ?string $siret = null; // SIRET de l'entreprise
@@ -26,23 +37,14 @@ class Company
     #[ORM\Column(length: 255)]
     private ?string $address = null; // Adresse de l'entreprise
 
-    /**
-     * @var Collection<int, User>
-     */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'companies')]
-    private Collection $users;
+    private Collection $users; // Utilisateurs associés à l'entreprise
 
-    /**
-     * @var Collection<int, Project>
-     */
     #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'company')]
-    private Collection $projects;
+    private Collection $projects; // Projets associés à l'entreprise
 
-    /**
-     * @var Collection<int, UserCompany>
-     */
     #[ORM\OneToMany(targetEntity: UserCompany::class, mappedBy: 'company', orphanRemoval: true)]
-    private Collection $userCompanies;
+    private Collection $userCompanies; // Associations utilisateur-entreprise
 
     public function __construct()
     {
@@ -51,6 +53,7 @@ class Company
         $this->userCompanies = new ArrayCollection();
     }
 
+    // Méthodes pour accéder et modifier les propriétés
     public function getId(): ?int
     {
         return $this->id;
@@ -89,9 +92,6 @@ class Company
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
     public function getUsers(): Collection
     {
         return $this->users;
@@ -111,9 +111,6 @@ class Company
         return $this;
     }
 
-    /**
-     * @return Collection<int, Project>
-     */
     public function getProjects(): Collection
     {
         return $this->projects;
@@ -131,7 +128,6 @@ class Company
     public function removeProject(Project $project): static
     {
         if ($this->projects->removeElement($project)) {
-            // Set the owning side to null (unless already changed)
             if ($project->getCompany() === $this) {
                 $project->setCompany(null);
             }
@@ -139,9 +135,6 @@ class Company
         return $this;
     }
 
-    /**
-     * @return Collection<int, UserCompany>
-     */
     public function getUserCompanies(): Collection
     {
         return $this->userCompanies;
@@ -159,7 +152,6 @@ class Company
     public function removeUserCompany(UserCompany $userCompany): static
     {
         if ($this->userCompanies->removeElement($userCompany)) {
-            // Set the owning side to null (unless already changed)
             if ($userCompany->getCompany() === $this) {
                 $userCompany->setCompany(null);
             }

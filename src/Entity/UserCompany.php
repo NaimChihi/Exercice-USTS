@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserCompanyRepository;
 
+// Déclare l'entité UserCompany
 #[ORM\Entity(repositoryClass: UserCompanyRepository::class)]
 class UserCompany
 {
@@ -17,9 +18,12 @@ class UserCompany
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userAccount = null;
 
-    #[ORM\ManyToOne(targetEntity: Company::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(targetEntity: Company::class, inversedBy: 'userCompanies')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Company $company = null;
+
+    #[ORM\Column(length: 50)]
+    private ?string $role = null; // Ajoute un champ pour le rôle de l'utilisateur dans l'entreprise
 
     public function getId(): ?int
     {
@@ -45,6 +49,17 @@ class UserCompany
     public function setCompany(?Company $company): static
     {
         $this->company = $company;
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): static
+    {
+        $this->role = $role;
         return $this;
     }
 }

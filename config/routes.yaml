@@ -1,8 +1,8 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+#controllers:
+#   resource:
+#        path: ../src/Controller/
+#        namespace: App\Controller
+#    type: attribute
 
 auth:
     path: /api/auth
@@ -12,8 +12,7 @@ protected_route:
     path: /api/protected-route
     controller: App\Controller\ProtectedController::protectedRoute
     methods: GET
-
-companies:
-    path: /api/companies
-    controller: App\Controller\CompanyController::create
-    methods: ["POST"]
+#companies:
+#    path: /api/companies
+#   controller: App\Controller\CompanyController::create
+#    methods: ["POST"]

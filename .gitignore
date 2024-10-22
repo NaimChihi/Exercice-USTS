@@ -20,3 +20,6 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+# Ignorer compose.yaml
+/compose.yaml

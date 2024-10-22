@@ -112,7 +112,7 @@ Les utilisateurs étant déjà fournis, il n'est pas nécessaire d'en sécuriser
 
 Cet exercice vous permet de démontrer vos compétences en gestion de droits d'accès dans une application multi-sociétés, ainsi que votre capacité à organiser et sécuriser une API Symfony avec des cas d'usage complexes.
 
----------------------------------------------------------------------------------------------------------------- ## Résumé du développement pour l'exercice USTS ##
+-------- ## Résumé du développement pour l'exercice USTS ## -----------
 
 ## Étapes du Développement :
 
@@ -142,3 +142,41 @@ Lors de la réalisation des tests, j'ai rencontré des difficultés, notamment a
 -   **Documentation** :
 
 J'ai documenté l'API et les fonctionnalités clés pour faciliter l'utilisation par d'autres développeurs et pour les tests futurs.
+
+------------- Correction--------------------------
+
+## Résumé des Modifications Apportées :
+
+-   **Suppression des Contrôleurs sur Mesure** :
+
+J'ai retiré tous les contrôleurs spécifiques que j'avais créés pour gérer les sociétés et les projets. L'objectif était de simplifier la structure de l'application et de se conformer à l'approche standard de Symfony et API Platform.
+
+-   **Adaptation des Entités** :
+
+J'ai modifié les entités Company et Project pour m'assurer qu'elles soient compatibles avec les nouvelles approches. Cela inclut l'ajout et la modification des relations, ainsi que la mise à jour des annotations pour correspondre aux attentes.
+
+-   **Création du ProjectVoter** :
+
+J'ai créé un voter personnalisé nommé ProjectVoter. Ce voter est responsable de gérer les autorisations sur les projets en fonction des rôles des utilisateurs (admin, manager, consultant).
+Le voter vérifie les permissions pour les actions de création, modification et suppression de projets.
+
+-   **Tests Unitaires** :
+
+J'ai également créé des tests unitaires pour le ProjectVoter : ProjectVoterTest.php afin de m'assurer que les autorisations sont correctement appliquées. Ces tests vérifient que les utilisateurs avec différents rôles ne peuvent effectuer que les actions autorisées.
+
+-   **Tests SQL et Base de Données** :
+
+J'ai effectué des tests en utilisant des requêtes SQL pour vérifier que les données sont bien insérées et mises à jour dans la base de données PostgreSQL.
+J'ai utilisé l'interface pgAdmin pour gérer et visualiser les données dans la base de données.
+
+-   **Tests avec Postman** :
+
+J'ai également effectué des tests d'API en utilisant Postman pour valider le bon fonctionnement des endpoints. Cela m'a permis de m'assurer que les réponses étaient conformes aux spécifications et que les contrôles d'accès fonctionnaient correctement en fonction des rôles des utilisateurs.
+
+-   **Gestion des Variables d'Environnement** :
+
+Pour des raisons de sécurité, j'ai ajouté le fichier phpunit.xml.dist au fichier .gitignore. Cela permet de masquer complètement le fichier et d'éviter que des informations sensibles, telles que le mot de passe de la base de données, ne soient visibles sur GitHub.
+
+-   **Validation et déploiement** :
+
+J'ai commis toutes les modifications sur GitHub pour permettre une revue et une validation.

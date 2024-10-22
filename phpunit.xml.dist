@@ -9,7 +9,8 @@
         <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
-        <server name="DATABASE_URL" value="postgresql://postgres:mine@127.0.0.1:5432/usts_test?serverVersion=16&amp;charset=utf8" />
+        <!-- Utilisation d'une variable d'environnement pour masquer le mot de passe -->
+        <server name="DATABASE_URL" value="${DATABASE_URL}" />
         <server name="SHELL_VERBOSITY" value="-1" />
         <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
         <server name="SYMFONY_PHPUNIT_VERSION" value="9.5" />
